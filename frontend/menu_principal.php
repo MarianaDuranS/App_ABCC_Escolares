@@ -35,7 +35,9 @@
                     <li class="nav-item">
                         <a class="nav-link fw-semibold" href="bajas_cambios.php">ELIMINAR/MODIFICAR</a>
                     </li>
-                    
+                    <li class="nav-item">
+                        <a class="nav-link active fw-semibold" aria-current="page" href="formulario_altas.php">BUSQUEDAS</a>
+                    </li>
                     <!-- menu desplegable -->
                     
                 </ul>
