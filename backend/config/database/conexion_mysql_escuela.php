@@ -8,7 +8,6 @@ class ConexionBDEscuela {
     private $bd = "BD_Escuela_Web_2026";
 
     public function __construct() {
-        // Cadena de conexión (DSN) para PDO
         try {
             $this->conexion = new PDO(
                 "mysql:host=$this->host;port=$this->puerto;dbname=$this->bd;charset=utf8mb4",
