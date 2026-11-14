@@ -1,41 +1,30 @@
 <?php
-    include_once('../backend/config/database/conexion_mysql_escuela.php');
+   include_once('../backend/controllers/alumno_dao.php');
 
-    $con = new ConexionBDEscuela();
-    $conexion = $con->getConexion();
+    if($_SERVER['REQUEST_METHOD'] == 'GET'){
+        $respuesta['alumnos'] = array();
 
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        try {
+            $dao = new AlumnoDAO(); 
 
-        $cadenaJSON = file_get_contents('php://input');
-        if(!$cadenaJSON){
-            echo"no hay cadena JSON";
-        }else{
-            $sql = "SELECT * FROM alumnos";
-
-            $res = mysqli_query($conexion, $sql);
-
-            $respuesta['alumnos'] = array();
-            if($res){
-                
-                while($fila=mysqli_fetch_assoc($res)){
-                    $alumno = array();
-                    $alumno['nc'] = $fila['Num_Control'];
-                    $alumno['n'] = $fila['nombre'];
-                    $alumno['pa'] = $fila['primer_Ap'];
-                    $alumno['sa'] = $fila['segundo_Ap'];
-                    $alumno['fn'] = $fila['Fecha_Nac'];
-                    $alumno['s'] = $fila['Semestre'];
-                    $alumno['c'] = $fila['Carrera'];
-                    array_push($respuesta['alumnos'], $alumno);
+            if(isset($_GET['nc'])){
+                $a = $dao->buscarAlumno($_GET['nc']);
+                if($a){
+                    array_push($respuesta['alumnos'], $a->toArray());
                 }
-
-                $respuesta['consulta'] = true ;
-
             }else{
-                $respuesta['consulta'] = "No hay registros";
+                foreach($dao->mostrarAlumnos() as $a){
+                    array_push($respuesta['alumnos'], $a->toArray()); 
+                }
             }
-            echo json_encode($respuesta);
+
+            $respuesta['consulta'] = true ;
+
+        } catch (PDOException $e) {
+            $respuesta['consulta'] = "No hay registros";
         }
+
+        echo json_encode($respuesta);
     }
 
 ?>
