@@ -9,19 +9,14 @@ class ConexionBDEscuela {
 
     public function __construct() {
         // Cadena de conexión (DSN) para PDO
-        $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->bd};charset=utf8mb4";
-        
-        // Opciones recomendadas para PDO
-        $opciones = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // Lanza excepciones en caso de error
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // Devuelve los resultados como arreglos asociativos
-            PDO::ATTR_EMULATE_PREPARES   => false,                  // Usa sentencias preparadas reales del motor de BD
-        ];
-
         try {
-            $this->conexion = new PDO($dsn, $this->usuario, $this->password, $opciones);
+            $this->conexion = new PDO(
+                "mysql:host=$this->host;port=$this->puerto;dbname=$this->bd;charset=utf8mb4",
+                $this->usuario,
+                $this->password
+            );
+            $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            // En producción, es mejor registrar el error en un log en lugar de mostrarlo con die()
             die("Error en la conexion: " . $e->getMessage());
         }
     }

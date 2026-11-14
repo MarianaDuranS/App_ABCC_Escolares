@@ -19,6 +19,8 @@ class AlumnoDAO{
                 VALUES('$nc', '$nombre', '$primerAp',
                  '$segundoAp', '$fechaNac', $semestre, '$carrera')";
 
+        4stm ¿ 
+
         $res = mysqli_query($this->conexion, $sql);
         return $res;
     }
