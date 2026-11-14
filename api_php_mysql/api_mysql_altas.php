@@ -1,9 +1,6 @@
 <?php
 
-    include_once('../backend/config/database/conexion_mysql_escuela.php');
-
-    $con = new ConexionBDEscuela();
-    $conexion = $con->getConexion();
+    include_once('../backend/controllers/alumno_dao.php');
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
@@ -13,26 +10,25 @@
             echo"no hay cadena JSON";
         }else{
             $datos = json_decode($cadenaJSON, true);
-            $nc = $datos['nc'];
-            $n = $datos['n']; //nombre
-            $pa = $datos['pa']; //primer apellido
-            $sa = $datos['sa']; //Segundo apellido
-            $fn = $datos['fn']; //fecha nacimiento
-            $s = $datos['s']; //semestre
-            $c = $datos['c']; //carrera
 
-            $sql = "INSERT INTO Alumnos VALUES ('$nc', '$n', '$pa', '$sa', '$fn', '$s', '$c')";
-
-            $res = mysqli_query($conexion, $sql);
+            $alumno = Alumno::desdeJson($datos);
 
             $respuesta = array();
+
+             try {
+                $dao = new AlumnoDAO();               
+                $res = $dao->agregarAlumno($alumno);  
+            } catch (PDOException $e) {
+                $res = false;
+            }
+
             if($res){
                 $respuesta['alta'] = true;
             }else{
                 $respuesta['alta'] = false;
             }
 
-            echo json_encode($respuesta); //codificar la respuesta
+            echo json_encode($respuesta);
         }
     }
 
