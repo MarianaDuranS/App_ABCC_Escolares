@@ -2,7 +2,7 @@
 class ConexionBDEscuela {
     private $conexion;
     private $host = "localhost";
-    private $port = "3306";
+    private $puerto = "3306";
     private $usuario = "Mariana";
     private $password = "mariana123";
     private $bd = "BD_Escuela_Web_2026";
