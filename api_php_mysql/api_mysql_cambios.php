@@ -1,10 +1,7 @@
 <?php
-include_once('../backend/config/database/conexion_mysql_escuela.php');
+    include_once('../backend/controllers/alumno_dao.php');
 
-    $con = new ConexionBDEscuela();
-    $conexion = $con->getConexion();
-
-     if($_SERVER['REQUEST_METHOD'] == 'POST'){
+     if($_SERVER['REQUEST_METHOD'] == 'PUT' || $_SERVER['REQUEST_METHOD'] == 'PATCH'){
 
         $cadenaJSON = file_get_contents('php://input');
 
@@ -12,33 +9,31 @@ include_once('../backend/config/database/conexion_mysql_escuela.php');
             echo"no hay cadena JSON";
         }else{
             $datos = json_decode($cadenaJSON, true);
-            $nc = $datos['nc'];
-            $n = $datos['n']; //nombre
-            $pa = $datos['pa']; //primer apellido
-            $sa = $datos['sa']; //Segundo apellido
-            $fn = $datos['fn']; //fecha nacimiento
-            $s = $datos['s']; //semestre
-            $c = $datos['c']; //carrera
-
-            $sql = "UPDATE alumnos SET 
-            nombre = '$n', 
-            primer_Ap = '$pa', 
-            segundo_Ap = '$sa', 
-            Fecha_Nac = '$fn', 
-            Semestre = '$s', 
-            Carrera = '$c' 
-            WHERE Num_Control = '$nc'";
-
-            $res = mysqli_query($conexion, $sql);
 
             $respuesta = array();
+         
+            try {
+                $dao = new AlumnoDAO(); 
+
+                if($_SERVER['REQUEST_METHOD'] == 'PUT'){
+                    $alumno = Alumno::desdeJson($datos);
+                    $res = $dao->modificarAlumno($alumno);
+                }else{
+                    $nc = $datos['nc'];
+                    unset($datos['nc']);
+                    $res = $dao->modificarParcial($nc, $datos);
+                }
+            } catch (PDOException $e) {
+                $res = false;
+            }
+
             if($res){
                 $respuesta['cambios'] = true;
             }else{
                 $respuesta['cambios'] = false;
             }
 
-            echo json_encode($respuesta); //codificar la respuesta
+            echo json_encode($respuesta); 
         }
      }
 ?>
