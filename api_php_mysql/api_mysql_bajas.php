@@ -1,11 +1,8 @@
 <?php
 
-    include_once('../backend/config/database/conexion_mysql_escuela.php');
+    include_once('../backend/controllers/alumno_dao.php');
 
-    $con = new ConexionBDEscuela();
-    $conexion = $con->getConexion();
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
 
         $cadenaJSON = file_get_contents('php://input');
 
@@ -14,20 +11,22 @@
         }else{
             $datos = json_decode($cadenaJSON, true);
             $nc = $datos['nc'];
-           
-
-            $sql = "DELETE FROM alumnos WHERE Num_Control = '$nc'";
-
-            $res = mysqli_query($conexion, $sql);
 
             $respuesta = array();
+            try {
+                $dao = new AlumnoDAO();             
+                $res = $dao->eliminarAlumno($nc); 
+            } catch (PDOException $e) {
+                $res = false;
+            }
+
             if($res){
                 $respuesta['baja'] = true;
             }else{
                 $respuesta['baja'] = false;
             }
 
-            echo json_encode($respuesta); //codificar la respuesta
+            echo json_encode($respuesta); 
         }
     }
 
